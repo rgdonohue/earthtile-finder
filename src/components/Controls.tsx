@@ -34,8 +34,8 @@ export default function Controls() {
         >
           Search Map Extent
         </button>
-        <div className="flex-1 min-w-[180px]">
-          <label className="text-xs text-gray-400">Cloud (lt)</label>
+        <div className="flex-1 min-w-[200px]">
+          <label className="text-xs text-gray-400">Cloud ≤</label>
           <input
             className="w-full accent-cyan-400"
             type="range"
@@ -43,6 +43,12 @@ export default function Controls() {
             max={80}
             value={filters.cloudLt}
             onChange={(e) => setFilters({ cloudLt: Number(e.target.value) })}
+            onPointerUp={() => search()}
+            onKeyUp={(e) => {
+              if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+                search();
+              }
+            }}
           />
           <span className="text-xs text-gray-400">{filters.cloudLt}%</span>
         </div>
