@@ -7,6 +7,7 @@ type State = {
   filters: Filters;
   items: NormalizedItem[];
   selectedId: string | null;
+  hoverId: string | null;
   loading: boolean;
   error: StoreError | null;
   getMapBBox?: () => BBox | null;
@@ -20,6 +21,7 @@ type Actions = {
   setFilters: (partial: Partial<Filters>) => void;
   setBBox: (bbox: BBox | null) => void;
   select: (id: string | null) => void;
+  setHover: (id: string | null) => void;
   search: () => Promise<void>;
   initDefaultsAndSearch: () => Promise<void>;
   setMapBBoxGetter: (fn: (() => BBox | null) | undefined) => void;
@@ -33,6 +35,7 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   filters: { ...DEFAULTS },
   items: [],
   selectedId: null,
+  hoverId: null,
   loading: false,
   error: null,
   previewOverlay: { id: null, url: null },
@@ -43,6 +46,7 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   setFilters: (partial) => set((s) => ({ filters: { ...s.filters, ...partial } })),
   setBBox: (bbox) => set((s) => ({ filters: { ...s.filters, bbox } })),
   select: (id) => set(() => ({ selectedId: id, suppressNextFit: false })),
+  setHover: (id) => set(() => ({ hoverId: id })),
   setMapBBoxGetter: (fn) => set(() => ({ getMapBBox: fn })),
   setPreviewOverlay: (id, url) => set(() => ({ previewOverlay: { id, url }, overlayVisible: true })),
   setSuppressNextFit: (v) => set(() => ({ suppressNextFit: v })),

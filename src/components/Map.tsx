@@ -64,7 +64,10 @@ export default function Map() {
 
     map.on('load', () => {
       map.addSource('items', { type: 'geojson', data: featureCollection });
-      map.addLayer({ id: 'footprints-line', type: 'line', source: 'items', paint: { 'line-color': '#00f0ff', 'line-width': 1.5 } });
+      map.addLayer({ id: 'footprints-line', type: 'line', source: 'items', paint: { 'line-color': '#00f0ff', 'line-width': 1.2 } });
+      // Hover layer (cyan) sits above base lines but below selected highlight
+      map.addLayer({ id: 'footprints-hover', type: 'line', source: 'items', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#00f0ff', 'line-width': 2.4 } });
+      // Selected highlight (magenta) on top
       map.addLayer({ id: 'footprints-highlight', type: 'line', source: 'items', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#ff2e92', 'line-width': 3 } });
     });
 
@@ -145,6 +148,15 @@ export default function Map() {
       if (b) map.fitBounds(b, { padding: 32, animate: true });
     }
   }, [selectedId, suppressNextFit, featureCollection]);
+
+  // Hover highlight (no zoom)
+  const hoverId = useSearchStore((s) => s.hoverId);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const layerId = 'footprints-hover';
+    if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get', 'id'], hoverId ?? '']);
+  }, [hoverId]);
 
   // Overlay effect
   useEffect(() => {

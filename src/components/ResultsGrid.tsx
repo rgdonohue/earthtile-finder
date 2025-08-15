@@ -9,10 +9,11 @@ const fmt = new Intl.DateTimeFormat(undefined, {
 });
 
 export default function ResultsGrid() {
-  const { items, selectedId, select } = useSearchStore((s) => ({
+  const { items, selectedId, select, setHover } = useSearchStore((s) => ({
     items: s.items,
     selectedId: s.selectedId,
     select: s.select,
+    setHover: s.setHover,
   }));
 
   if (!items.length) return <div>No items</div>;
@@ -59,6 +60,8 @@ export default function ResultsGrid() {
             'bg-slate-800/60 border-slate-700/50 backdrop-blur-sm hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10 ' +
             (selectedId === it.id ? 'ring-2 ring-cyan-400' : '')
           }
+          onMouseEnter={() => setHover(it.id)}
+          onMouseLeave={() => setHover(null)}
         >
           {it.thumbnail ? (
             <img src={it.thumbnail} alt="thumbnail" className="w-full h-28 object-cover rounded-lg" />
