@@ -44,49 +44,69 @@ export default function ItemDetails() {
   if (!open || !item) return null;
 
   return (
-    <div style={{ border: '1px solid #eee', padding: 12, marginTop: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <strong>Item Details</strong>
-        <button onClick={() => setOpen(false)}>Close</button>
-      </div>
-      <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{item.id}</div>
-      <div style={{ marginTop: 8 }}>
-        <button onClick={() => setPreviewOverlay(item.id, tileUrl || item.visualHref || pickFirstImageAsset(item.assets))} disabled={!tileUrl && !item.visualHref && !pickFirstImageAsset(item.assets)}>
-          Preview on map
-        </button>
-        {item.visualHref ? (
-          <button style={{ marginLeft: 8 }} onClick={() => window.open(item.visualHref!, '_blank')}>
-            Open visual
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+      <div className="relative w-[92vw] max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-slate-700/50 bg-slate-800/70 backdrop-blur-sm p-4 sm:p-6 text-sm text-gray-300 shadow-xl">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-wide text-white">Item Details</h2>
+          <button
+            className="rounded-lg border border-slate-700/50 px-3 py-1 text-sm hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
+            onClick={() => setOpen(false)}
+          >
+            Close
           </button>
-        ) : null}
-      </div>
-      <div style={{ marginTop: 12 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ textAlign: 'left' }}>
-              <th>Asset</th>
-              <th>Type</th>
-              <th>Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            {item.assets?.map((a) => (
-              <tr key={a.key}>
-                <td>{a.key}</td>
-                <td style={{ fontSize: 12, color: '#666' }}>{a.type || '—'}</td>
-                <td>
-                  <button onClick={() => window.open(a.href, '_blank')}>Open</button>
-                  <button
-                    style={{ marginLeft: 6 }}
-                    onClick={() => navigator.clipboard.writeText(a.href)}
-                  >
-                    Copy
-                  </button>
-                </td>
+        </div>
+        <div className="text-xs text-gray-400 mt-1 truncate">{item.id}</div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            onClick={() => setPreviewOverlay(item.id, tileUrl || item.visualHref || pickFirstImageAsset(item.assets))}
+            disabled={!tileUrl && !item.visualHref && !pickFirstImageAsset(item.assets)}
+            className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70 disabled:opacity-50"
+          >
+            Preview on map
+          </button>
+          {item.visualHref ? (
+            <button
+              className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
+              onClick={() => window.open(item.visualHref!, '_blank')}
+            >
+              Open visual
+            </button>
+          ) : null}
+        </div>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-gray-400">
+                <th className="py-1">Asset</th>
+                <th className="py-1">Type</th>
+                <th className="py-1">Link</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {item.assets?.map((a) => (
+                <tr key={a.key} className="border-t border-slate-700/40">
+                  <td className="py-2 text-gray-200">{a.key}</td>
+                  <td className="py-2 text-xs text-gray-400">{a.type || '—'}</td>
+                  <td className="py-2">
+                    <button
+                      className="rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
+                      onClick={() => window.open(a.href, '_blank')}
+                    >
+                      Open
+                    </button>
+                    <button
+                      className="ml-2 rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
+                      onClick={() => navigator.clipboard.writeText(a.href)}
+                    >
+                      Copy
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

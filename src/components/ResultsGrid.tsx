@@ -20,7 +20,7 @@ export default function ResultsGrid() {
   return (
     <div
       role="list"
-      style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}
+      className="grid grid-cols-1 sm:grid-cols-2 gap-3"
       onKeyDown={(e) => {
         const cols = 2;
         const currentIdx = Math.max(
@@ -54,19 +54,17 @@ export default function ResultsGrid() {
               select(it.id);
             }
           }}
-          style={{
-            border: selectedId === it.id ? '2px solid dodgerblue' : '1px solid #ddd',
-            textAlign: 'left',
-            padding: 8,
-            outline: 'none',
-            boxShadow: selectedId === it.id ? '0 0 0 2px rgba(30,144,255,0.3)' : 'none',
-          }}
+          className={
+            'group rounded-xl border text-left p-2 sm:p-3 transition-transform transition-colors duration-150 ease-out ' +
+            'bg-slate-800/60 border-slate-700/50 backdrop-blur-sm hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10 ' +
+            (selectedId === it.id ? 'ring-2 ring-cyan-400' : '')
+          }
         >
           {it.thumbnail ? (
             <img
               src={it.thumbnail}
               alt="thumbnail"
-              style={{ width: '100%', height: 120, objectFit: 'cover', cursor: 'pointer' }}
+              className="w-full h-28 object-cover rounded-lg cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 if (it.visualHref) {
@@ -78,34 +76,33 @@ export default function ResultsGrid() {
               }}
             />
           ) : (
-            <div style={{ width: '100%', height: 120, background: '#eee' }} />
+            <div className="w-full h-28 bg-slate-700/50 rounded" />
           )}
-          <div style={{ marginTop: 4 }}>
-            <div style={{ fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
-              <span>{it.collection || 'item'}</span>
-              <span style={{ fontWeight: 400, fontSize: 12, color: '#666' }}>{it.cloudCover ?? '—'}% cc</span>
+          <div className="mt-2">
+            <div className="flex justify-between items-baseline">
+              <span className="font-semibold tracking-wide text-gray-100">{it.collection || 'item'}</span>
+              <span className="text-xs text-gray-400">{it.cloudCover ?? '—'}% cc</span>
             </div>
-            <div style={{ fontSize: 12, color: '#666' }}>
-              {it.datetime ? fmt.format(new Date(it.datetime)) : '—'}
-            </div>
-            <div style={{ fontSize: 11, color: '#999', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.id}</div>
-            <div style={{ marginTop: 6 }}>
+            <div className="text-xs text-gray-400">{it.datetime ? fmt.format(new Date(it.datetime)) : '—'}</div>
+            <div className="text-[10px] text-gray-500 truncate">{it.id}</div>
+            <div className="mt-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   const ev = new CustomEvent('open-item-details', { detail: { id: it.id } });
                   window.dispatchEvent(ev);
                 }}
+                className="rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-cyan-500/10 hover:shadow-lg transition-all"
               >
                 Details
               </button>
               {it.visualHref ? (
                 <button
-                  style={{ marginLeft: 8 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(it.visualHref!, '_blank', 'noopener');
                   }}
+                  className="ml-2 rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-cyan-500/10 hover:shadow-lg transition-all"
                 >
                   Open visual
                 </button>

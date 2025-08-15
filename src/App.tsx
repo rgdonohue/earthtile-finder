@@ -13,16 +13,18 @@ export default function App() {
   }, [init]);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', height: '100vh' }}>
-      <aside style={{ padding: 16, overflow: 'auto', borderRight: '1px solid #eee' }}>
-        <h1 style={{ marginTop: 0 }}>STAC Scene Finder</h1>
+    <div className="h-screen w-screen grid grid-cols-1 md:grid-cols-[360px_1fr] bg-slate-900 text-gray-300">
+      <aside className="relative overflow-y-auto border-r border-slate-800/60 p-4 md:p-6">
+        <h1 className="mt-0 mb-4 text-xl font-semibold tracking-wide text-white">
+          STAC Scene Finder
+        </h1>
         <Controls />
-        <div style={{ marginTop: 16 }}>
+        <div className="mt-4 space-y-4">
           <ResultsGrid />
           <ItemDetails />
         </div>
       </aside>
-      <main>
+      <main className="relative">
         <Map />
       </main>
     </div>

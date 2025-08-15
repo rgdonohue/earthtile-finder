@@ -229,5 +229,5 @@ export default function Map() {
     }
   }, [previewOverlay, featureCollection, filters.bbox]);
 
-  return <div ref={containerRef} style={{ height: '100%', width: '100%' }} />;
+  return <div ref={containerRef} className="absolute inset-0" />;
 }

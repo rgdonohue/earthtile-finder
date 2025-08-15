@@ -9,23 +9,20 @@ export default function StatusBanner() {
   }));
 
   return (
-    <div style={{ display: 'grid', gap: 6 }}>
+    <div className="grid gap-1">
       {loading ? (
-        <div role="status" aria-live="polite" style={{ color: '#333' }}>
+        <div role="status" aria-live="polite" className="text-sm text-gray-300">
           Searching…
         </div>
       ) : null}
       {error ? (
-        <div role="alert" aria-live="polite" style={{ color: 'crimson' }}>
+        <div role="alert" aria-live="polite" className="text-sm text-red-400">
           {error.message}
         </div>
       ) : null}
       {!loading && !error ? (
-        <div style={{ color: '#666', fontSize: 13 }}>
-          Results: {items.length} (showing up to 50)
-        </div>
+        <div className="text-xs text-gray-400">Results: {items.length} (showing up to 50)</div>
       ) : null}
     </div>
   );
 }
-
