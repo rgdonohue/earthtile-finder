@@ -40,12 +40,20 @@ export default function ResultsGrid() {
       }}
     >
       {items.map((it) => (
-        <button
+        <div
           key={it.id}
           id={`card-${String(it.id)}`}
           role="listitem"
           aria-pressed={selectedId === it.id}
           onClick={() => select(it.id)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              select(it.id);
+            }
+          }}
           style={{
             border: selectedId === it.id ? '2px solid dodgerblue' : '1px solid #ddd',
             textAlign: 'left',
@@ -104,7 +112,7 @@ export default function ResultsGrid() {
               ) : null}
             </div>
           </div>
-        </button>
+        </div>
       ))}
     </div>
   );
