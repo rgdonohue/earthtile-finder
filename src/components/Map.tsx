@@ -131,8 +131,15 @@ export default function Map() {
     if (src && 'setData' in src) src.setData(featureCollection as any);
     if (!suppressNextFit) {
       const fcBounds = featureCollectionBounds(featureCollection);
-      if (fcBounds) map.fitBounds(fcBounds, { padding: 24, animate: true });
-      else if (filters.bbox) map.fitBounds([[filters.bbox[0], filters.bbox[1]], [filters.bbox[2], filters.bbox[3]]], { padding: 24, animate: true });
+      if (fcBounds) {
+        const [[w, s], [e, n]] = fcBounds as any;
+        const b = new maplibregl.LngLatBounds([w, s], [e, n]);
+        map.fitBounds(b, { padding: 24, animate: true });
+      } else if (filters.bbox) {
+        const [w, s, e, n] = filters.bbox;
+        const b = new maplibregl.LngLatBounds([w, s], [e, n]);
+        map.fitBounds(b, { padding: 24, animate: true });
+      }
     }
   }, [featureCollection, filters.bbox, suppressNextFit]);
 
@@ -144,8 +151,12 @@ export default function Map() {
     if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get','id'], selectedId ?? '']);
     if (selectedId && !suppressNextFit) {
       const feat = featureCollection.features.find((f: any) => f.id === selectedId) as any;
-      const b = feat ? geometryBounds(feat.geometry) : null;
-      if (b) map.fitBounds(b, { padding: 32, animate: true });
+      const gb = feat ? geometryBounds(feat.geometry) : null;
+      if (gb) {
+        const [[w, s], [e, n]] = gb as any;
+        const b = new maplibregl.LngLatBounds([w, s], [e, n]);
+        map.fitBounds(b, { padding: 32, animate: true });
+      }
     }
   }, [selectedId, suppressNextFit, featureCollection]);
 

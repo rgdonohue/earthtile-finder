@@ -12,10 +12,10 @@
     "jsx": "react-jsx",
     "strict": true,
     "baseUrl": ".",
+    "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["src/*"]
     }
   },
   "include": ["src", "vite.config.ts", "vitest.config.ts"]
 }
-

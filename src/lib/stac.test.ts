@@ -45,16 +45,17 @@ describe('stac.ts', () => {
 
   it('fetchStac falls back to /sample.json on error', async () => {
     const fetchMock = vi
-      .spyOn(global, 'fetch' as any)
+      .fn()
       .mockRejectedValueOnce(new Error('network'))
       .mockResolvedValueOnce({ ok: true, json: async () => ({ features: [] }) } as any);
+    vi.stubGlobal('fetch', fetchMock as any);
 
     const result = await fetchStac({ hello: 'world' }, 'https://invalid.example.com');
     expect(result).toEqual({ features: [] });
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect((fetchMock as any).mock.calls[1][0]).toBe('/sample.json');
 
-    afterEach(() => fetchMock.mockRestore());
+    vi.unstubAllGlobals();
   });
 
   it('throws E03_PARSE on malformed response and logs', () => {
