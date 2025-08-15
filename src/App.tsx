@@ -13,7 +13,7 @@ export default function App() {
   }, [init]);
 
   return (
-    <div className="h-screen w-screen grid grid-cols-1 md:grid-cols-[360px_1fr] bg-slate-900 text-gray-300">
+    <div className="h-screen w-screen grid grid-cols-1 md:grid-cols-[440px_1fr] bg-slate-900 text-gray-300">
       <aside className="relative overflow-y-auto border-r border-slate-800/60 p-4 md:p-6">
         <h1 className="mt-0 mb-2 text-xl font-semibold tracking-wide text-white">STAC Scene Finder</h1>
         <p className="mb-4 text-sm text-gray-300">

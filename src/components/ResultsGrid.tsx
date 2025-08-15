@@ -56,7 +56,7 @@ export default function ResultsGrid() {
             }
           }}
           className={
-            'group w-full rounded-xl border text-left p-3 md:p-4 pr-4 transition-transform transition-colors duration-150 ease-out ' +
+            'group w-full rounded-xl border text-left p-3 md:p-4 pr-4 overflow-hidden transition-transform transition-colors duration-150 ease-out ' +
             'bg-slate-800/60 border-slate-700/50 backdrop-blur-sm hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10 ' +
             (selectedId === it.id ? 'ring-2 ring-cyan-400' : '')
           }
@@ -66,14 +66,14 @@ export default function ResultsGrid() {
           ) : (
             <div className="w-full h-28 bg-slate-700/50 rounded" />
           )}
-          <div className="mt-2 w-full">
+          <div className="mt-2 w-full min-w-0">
             <div className="flex justify-between items-baseline gap-2 min-w-0">
-              <span className="font-semibold tracking-wide text-gray-100">{it.collection || 'item'}</span>
-              <span className="text-xs text-gray-400">{it.cloudCover ?? '—'}% cc</span>
+              <span className="font-semibold tracking-wide text-gray-100 truncate flex-1 min-w-0">{it.collection || 'item'}</span>
+              <span className="text-xs text-gray-400 shrink-0">{it.cloudCover != null ? Math.trunc(it.cloudCover) : '—'}% cc</span>
             </div>
             <div className="text-xs text-gray-400 break-words">{it.datetime ? fmt.format(new Date(it.datetime)) : '—'}</div>
             <div className="text-[10px] text-gray-500 truncate">{it.id}</div>
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-2 flex items-center gap-2 flex-wrap">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
