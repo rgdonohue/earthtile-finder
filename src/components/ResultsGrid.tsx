@@ -57,11 +57,13 @@ export default function ResultsGrid() {
           }}
           className={
             'group w-full rounded-xl border text-left p-3 md:p-4 pr-4 overflow-hidden transition-transform transition-colors duration-150 ease-out ' +
-            'bg-slate-800/60 border-slate-700/50 backdrop-blur-sm hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10 ' +
-            (selectedId === it.id ? 'ring-2 ring-cyan-400' : '')
+            'bg-slate-800/60 border-slate-700/50 backdrop-blur-sm hover:scale-[1.02] hover:shadow-lg hover:shadow-slate-900/30 ' +
+            (selectedId === it.id ? 'ring-2 ring-fuchsia-500/80' : '')
           }
           onMouseEnter={() => setHover(it.id)}
           onMouseLeave={() => setHover(null)}
+          onFocus={() => setHover(it.id)}
+          onBlur={() => setHover(null)}
         >
           {it.thumbnail ? (
             <img src={it.thumbnail} alt="thumbnail" className="w-full h-28 object-cover rounded-lg" />
