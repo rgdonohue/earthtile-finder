@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchStore } from '@/store/useSearchStore';
 
 export default function ItemDetails() {
-  const { selectedId, items, setPreviewOverlay } = useSearchStore((s) => ({
+  const { selectedId, items, setPreviewOverlay, select } = useSearchStore((s) => ({
     selectedId: s.selectedId,
     items: s.items,
     setPreviewOverlay: s.setPreviewOverlay,
+    select: s.select,
   }));
   const [open, setOpen] = useState(false);
   const [itemId, setItemId] = useState<string | null>(null);
@@ -57,10 +58,20 @@ export default function ItemDetails() {
           </button>
         </div>
         <div className="text-xs text-gray-400 mt-1 truncate">{item.id}</div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setPreviewOverlay(item.id, tileUrl || item.visualHref || pickFirstImageAsset(item.assets))}
-            disabled={!tileUrl && !item.visualHref && !pickFirstImageAsset(item.assets)}
+            onClick={() => {
+              // Prefer tiler → visual → first image asset → thumbnail
+              const url =
+                tileUrl || item.visualHref || pickFirstImageAsset(item.assets) || item.thumbnail || null;
+              if (url) {
+                select(item.id);
+                setPreviewOverlay(item.id, url);
+              } else {
+                // eslint-disable-next-line no-console
+                console.warn('No previewable asset found for item', item.id);
+              }
+            }}
             className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70 disabled:opacity-50"
           >
             Preview on map
