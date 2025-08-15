@@ -1,0 +1,10 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      { "type":"Feature", "id":"S2A_2025-08-05", "bbox":[-108.1,37.1,-107.7,37.4],
+        "geometry":{"type":"Polygon","coordinates":[[[-108.1,37.1],[-107.7,37.1],[-107.7,37.4],[-108.1,37.4],[-108.1,37.1]]]},
+        "properties":{"datetime":"2025-08-05T17:20:00Z","eo:cloud_cover":12.3},
+        "assets":{"thumbnail":{"href":"https://placehold.co/320x180.png"}} }
+    ]
+  }
+  

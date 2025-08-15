@@ -21,7 +21,7 @@ export default function Controls() {
     <div className="grid gap-3 text-sm">
       <div className="flex flex-wrap gap-2 items-center">
         <button
-          className={btnBase + ' text-gray-200 w-full sm:w-auto sm:basis-1/2'}
+          className={btnBase + ' text-gray-200 w-auto shrink-0'}
           onClick={() => {
             const b = getMapBBox?.();
             if (b) {
@@ -34,8 +34,11 @@ export default function Controls() {
         >
           Search Map Extent
         </button>
-        <div className="flex-1 min-w-[200px]">
-          <label className="text-xs text-gray-400">Cloud ≤</label>
+        <div className="basis-[45%] max-w-[200px] grow-0 shrink-0">
+          <label className="text-xs text-gray-400 flex items-center justify-between">
+            <span>Cloud cover</span>
+            <span className="text-xs text-gray-400">{filters.cloudLt}%</span>
+          </label>
           <input
             className="w-full accent-cyan-400"
             type="range"
@@ -50,7 +53,6 @@ export default function Controls() {
               }
             }}
           />
-          <span className="text-xs text-gray-400">{filters.cloudLt}%</span>
         </div>
       </div>
 

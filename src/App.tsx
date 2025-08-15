@@ -22,7 +22,7 @@ export default function App() {
         <p className="mb-4 text-sm text-gray-300">
           An interface for exploring rich, open geospatial datasets via STAC.
           Search your map extent by date and cloud cover, scan thumbnails, preview imagery on the
-          map, and download assets like Sentinel‑2 visual and band COGs directly.
+          map, and download assets like Sentinel‑2 visual and band COGs directly (click Details below).
         </p>
         <Controls />
         <div className="mt-4 space-y-4">
