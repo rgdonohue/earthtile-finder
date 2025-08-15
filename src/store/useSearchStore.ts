@@ -47,7 +47,7 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   search: async () => {
     const { filters } = get();
     if (!filters.bbox) return; // need bbox to search
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, selectedId: null });
     try {
       const body = buildSearchBody(filters);
       const json = await fetchStac(body);

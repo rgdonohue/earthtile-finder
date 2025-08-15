@@ -185,12 +185,12 @@ export default function Map() {
       map.setFilter(layerId, ['==', ['get', 'id'], selectedId ?? '']);
     }
     // Also fit to selected feature
-    if (selectedId) {
+    if (selectedId && !suppressNextFit) {
       const feat = featureCollection.features.find((f: any) => f.id === selectedId) as any;
       const b = feat ? geometryBounds(feat.geometry) : null;
       if (b) map.fitBounds(b, { padding: 32, animate: true });
     }
-  }, [selectedId]);
+  }, [selectedId, suppressNextFit]);
 
   // Update preview overlay using TiTiler tiles when available, else image overlay
   useEffect(() => {
