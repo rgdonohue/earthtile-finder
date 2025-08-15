@@ -91,6 +91,27 @@ export default function Map() {
     };
   }, [featureCollection, setMapBBoxGetter]);
 
+  // Keep Reset View up to date with latest features/bbox
+  useEffect(() => {
+    setFitResults(() => () => {
+      const map = mapRef.current;
+      if (!map) return;
+      const fcBounds = featureCollectionBounds(featureCollection);
+      if (fcBounds) {
+        map.fitBounds(fcBounds, { padding: 24, animate: true });
+      } else if (filters.bbox) {
+        const b = filters.bbox;
+        map.fitBounds(
+          [
+            [b[0], b[1]],
+            [b[2], b[3]],
+          ],
+          { padding: 24, animate: true }
+        );
+      }
+    });
+  }, [featureCollection, filters.bbox, setFitResults]);
+
   function geometryBounds(geom: any): LngLatBoundsLike | null {
     if (!geom) return null;
     const coords: number[][] = [];
