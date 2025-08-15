@@ -170,11 +170,8 @@ export default function Map() {
           [b[2], b[3]],
         ], { padding: 24, animate: true });
       }
-    } else {
-      // clear the suppression once applied for this update cycle
-      setSuppressNextFit(false);
     }
-  }, [featureCollection, filters.bbox, suppressNextFit, setSuppressNextFit]);
+  }, [featureCollection, filters.bbox, suppressNextFit]);
 
   // Update highlight when selection changes
   useEffect(() => {

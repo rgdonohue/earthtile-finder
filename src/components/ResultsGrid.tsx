@@ -43,7 +43,6 @@ export default function ResultsGrid() {
         <div
           key={it.id}
           id={`card-${String(it.id)}`}
-          role="listitem"
           aria-pressed={selectedId === it.id}
           aria-selected={selectedId === it.id}
           onClick={() => select(it.id)}

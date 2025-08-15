@@ -53,14 +53,14 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
       const json = await fetchStac(body);
       const items = normalizeFeatures(json);
       if (!items.length) {
-        set({ items: [], loading: false, error: parseError('E02_EMPTY') });
+        set({ items: [], loading: false, error: parseError('E02_EMPTY'), suppressNextFit: false });
       } else {
-        set({ items, loading: false, error: null });
+        set({ items, loading: false, error: null, suppressNextFit: false });
       }
       applyFiltersToUrl(filters, true);
     } catch (e: any) {
       const err: StoreError = e?.code ? e : parseError('E01_NETWORK');
-      set({ loading: false, error: err });
+      set({ loading: false, error: err, suppressNextFit: false });
     }
   },
 
