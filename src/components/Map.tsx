@@ -78,7 +78,7 @@ export default function Map() {
       map.remove();
       mapRef.current = null;
     };
-  }, [featureCollection, setMapBBoxGetter]);
+  }, []);
 
   function geometryBounds(geom: any): LngLatBoundsLike | null {
     if (!geom) return null;
@@ -216,4 +216,3 @@ export default function Map() {
     </div>
   );
 }
-
