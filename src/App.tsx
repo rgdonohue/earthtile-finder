@@ -16,7 +16,7 @@ export default function App() {
     <div className="h-screen w-screen grid grid-cols-1 md:grid-cols-[440px_1fr] bg-slate-900 text-gray-300">
       <aside className="relative border-r border-slate-800/60 p-4 md:p-6 flex flex-col overflow-hidden">
         <div className="flex items-center gap-3 mb-2">
-          <img src="/logo.svg" alt="EarthTile logo" className="w-8 h-8 select-none" />
+          <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="EarthTile logo" className="w-8 h-8 select-none" />
           <h1 className="mt-0 text-xl font-semibold tracking-wide text-white">EarthTile Finder</h1>
         </div>
         <p className="mb-4 text-sm text-gray-300">
