@@ -3,7 +3,7 @@ import { useSearchStore } from '@/store/useSearchStore';
 import StatusBanner from '@/components/StatusBanner';
 
 export default function Controls() {
-  const { filters, setFilters, setBBox, search, loading, getMapBBox, fitResults, setSuppressNextFit } =
+  const { filters, setFilters, setBBox, search, loading, getMapBBox, setSuppressNextFit } =
     useSearchStore();
 
   const btnBase =
@@ -19,9 +19,9 @@ export default function Controls() {
 
   return (
     <div className="grid gap-3 text-sm">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 items-center">
         <button
-          className={btnBase + ' text-gray-200'}
+          className={btnBase + ' text-gray-200 w-full sm:w-auto sm:basis-1/2'}
           onClick={() => {
             const b = getMapBBox?.();
             if (b) {
@@ -34,42 +34,39 @@ export default function Controls() {
         >
           Search Map Extent
         </button>
-        <button className={btnBase + ' text-gray-200'} onClick={() => fitResults?.()} disabled={loading}>
-          Reset View
-        </button>
+        <div className="flex-1 min-w-[180px]">
+          <label className="text-xs text-gray-400">Cloud (lt)</label>
+          <input
+            className="w-full accent-cyan-400"
+            type="range"
+            min={0}
+            max={80}
+            value={filters.cloudLt}
+            onChange={(e) => setFilters({ cloudLt: Number(e.target.value) })}
+          />
+          <span className="text-xs text-gray-400">{filters.cloudLt}%</span>
+        </div>
       </div>
 
-      <div className="grid gap-2">
-        <label className="text-xs text-gray-400">Start Date</label>
-        <input
-          className={inputBase}
-          type="date"
-          value={filters.startDate}
-          onChange={(e) => setFilters({ startDate: e.target.value })}
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <label className="text-xs text-gray-400">End Date</label>
-        <input
-          className={inputBase}
-          type="date"
-          value={filters.endDate}
-          onChange={(e) => setFilters({ endDate: e.target.value })}
-        />
-      </div>
-
-      <div className="grid gap-1">
-        <label className="text-xs text-gray-400">Cloud (lt)</label>
-        <input
-          className="w-full accent-cyan-400"
-          type="range"
-          min={0}
-          max={80}
-          value={filters.cloudLt}
-          onChange={(e) => setFilters({ cloudLt: Number(e.target.value) })}
-        />
-        <span className="text-xs text-gray-400">{filters.cloudLt}%</span>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2">
+          <label className="text-xs text-gray-400">Start Date</label>
+          <input
+            className={inputBase + ' w-full'}
+            type="date"
+            value={filters.startDate}
+            onChange={(e) => setFilters({ startDate: e.target.value })}
+          />
+        </div>
+        <div className="grid gap-2">
+          <label className="text-xs text-gray-400">End Date</label>
+          <input
+            className={inputBase + ' w-full'}
+            type="date"
+            value={filters.endDate}
+            onChange={(e) => setFilters({ endDate: e.target.value })}
+          />
+        </div>
       </div>
 
       <div className="mt-1">
