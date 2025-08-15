@@ -7,13 +7,15 @@ export default function Map() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
 
-  const { items, selectedId, filters, setMapBBoxGetter, setFitResults, previewOverlay } = useSearchStore((s) => ({
+  const { items, selectedId, filters, setMapBBoxGetter, setFitResults, previewOverlay, suppressNextFit, setSuppressNextFit } = useSearchStore((s) => ({
     items: s.items,
     selectedId: s.selectedId,
     filters: s.filters,
     setMapBBoxGetter: s.setMapBBoxGetter,
     setFitResults: s.setFitResults,
     previewOverlay: s.previewOverlay,
+    suppressNextFit: s.suppressNextFit,
+    setSuppressNextFit: s.setSuppressNextFit,
   }));
 
   const featureCollection = useMemo(() => {
@@ -136,17 +138,22 @@ export default function Map() {
     const src = map.getSource('items') as any;
     if (src && 'setData' in src) src.setData(featureCollection as any);
     // fit to data if available; otherwise to current filters bbox
-    const fcBounds = featureCollectionBounds(featureCollection);
-    if (fcBounds) {
-      map.fitBounds(fcBounds, { padding: 24, animate: true });
-    } else if (filters.bbox) {
-      const b = filters.bbox;
-      map.fitBounds([
-        [b[0], b[1]],
-        [b[2], b[3]],
-      ], { padding: 24, animate: true });
+    if (!suppressNextFit) {
+      const fcBounds = featureCollectionBounds(featureCollection);
+      if (fcBounds) {
+        map.fitBounds(fcBounds, { padding: 24, animate: true });
+      } else if (filters.bbox) {
+        const b = filters.bbox;
+        map.fitBounds([
+          [b[0], b[1]],
+          [b[2], b[3]],
+        ], { padding: 24, animate: true });
+      }
+    } else {
+      // clear the suppression once applied for this update cycle
+      setSuppressNextFit(false);
     }
-  }, [featureCollection, filters.bbox]);
+  }, [featureCollection, filters.bbox, suppressNextFit, setSuppressNextFit]);
 
   // Update highlight when selection changes
   useEffect(() => {

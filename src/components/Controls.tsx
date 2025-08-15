@@ -3,7 +3,7 @@ import { useSearchStore } from '@/store/useSearchStore';
 import StatusBanner from '@/components/StatusBanner';
 
 export default function Controls() {
-  const { filters, setFilters, setBBox, search, loading, getMapBBox, fitResults } =
+  const { filters, setFilters, setBBox, search, loading, getMapBBox, fitResults, setSuppressNextFit } =
     useSearchStore();
 
   const btnBase =
@@ -26,15 +26,13 @@ export default function Controls() {
             const b = getMapBBox?.();
             if (b) {
               setBBox(b);
+              setSuppressNextFit(true); // do not auto-fit after search
               search();
             }
           }}
           disabled={loading}
         >
-          Use Map Extent
-        </button>
-        <button className={btnBase + ' text-gray-200'} onClick={() => search()} disabled={loading}>
-          {loading ? 'Searching…' : 'Search'}
+          Search Map Extent
         </button>
         <button className={btnBase + ' text-gray-200'} onClick={() => fitResults?.()} disabled={loading}>
           Reset View

@@ -12,6 +12,7 @@ type State = {
   getMapBBox?: () => BBox | null;
   fitResults?: () => void;
   previewOverlay?: { id: string | null; url: string | null };
+  suppressNextFit: boolean;
 };
 
 type Actions = {
@@ -23,6 +24,7 @@ type Actions = {
   setMapBBoxGetter: (fn: (() => BBox | null) | undefined) => void;
   setFitResults: (fn: (() => void) | undefined) => void;
   setPreviewOverlay: (id: string | null, url: string | null) => void;
+  setSuppressNextFit: (v: boolean) => void;
 };
 
 export const useSearchStore = create<State & Actions>((set, get) => ({
@@ -32,6 +34,7 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   loading: false,
   error: null,
   previewOverlay: { id: null, url: null },
+  suppressNextFit: false,
 
   setFilters: (partial) => set((s) => ({ filters: { ...s.filters, ...partial } })),
   setBBox: (bbox) => set((s) => ({ filters: { ...s.filters, bbox } })),
@@ -39,6 +42,7 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   setMapBBoxGetter: (fn) => set(() => ({ getMapBBox: fn })),
   setFitResults: (fn) => set(() => ({ fitResults: fn })),
   setPreviewOverlay: (id, url) => set(() => ({ previewOverlay: { id, url } })),
+  setSuppressNextFit: (v) => set(() => ({ suppressNextFit: v })),
 
   search: async () => {
     const { filters } = get();
