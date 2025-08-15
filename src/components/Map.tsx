@@ -83,7 +83,9 @@ export default function Map() {
     };
   }, []);
 
-  function geometryBounds(geom: any): LngLatBoundsLike | null {
+  type BoundsArray = [[number, number], [number, number]];
+
+  function geometryBounds(geom: any): BoundsArray | null {
     if (!geom) return null;
     const coords: number[][] = [];
     const walk = (g: any) => {
@@ -108,15 +110,15 @@ export default function Map() {
     return [[w, s], [e, n]];
   }
 
-  function featureCollectionBounds(fc: GeoJSON.FeatureCollection): LngLatBoundsLike | null {
-    let bounds: LngLatBoundsLike | null = null;
+  function featureCollectionBounds(fc: GeoJSON.FeatureCollection): BoundsArray | null {
+    let bounds: BoundsArray | null = null;
     for (const f of fc.features) {
       const b = geometryBounds((f as any).geometry);
       if (!b) continue;
       if (!bounds) bounds = b;
       else {
-        const [[w1, s1], [e1, n1]] = bounds;
-        const [[w2, s2], [e2, n2]] = b;
+        const [[w1, s1], [e1, n1]]: BoundsArray = bounds;
+        const [[w2, s2], [e2, n2]]: BoundsArray = b;
         bounds = [[Math.min(w1, w2), Math.min(s1, s2)], [Math.max(e1, e2), Math.max(n1, n2)]];
       }
     }
