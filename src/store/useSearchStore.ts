@@ -11,6 +11,7 @@ type State = {
   error: StoreError | null;
   getMapBBox?: () => BBox | null;
   fitResults?: () => void;
+  previewOverlay?: { id: string | null; url: string | null };
 };
 
 type Actions = {
@@ -21,6 +22,7 @@ type Actions = {
   initDefaultsAndSearch: () => Promise<void>;
   setMapBBoxGetter: (fn: (() => BBox | null) | undefined) => void;
   setFitResults: (fn: (() => void) | undefined) => void;
+  setPreviewOverlay: (id: string | null, url: string | null) => void;
 };
 
 export const useSearchStore = create<State & Actions>((set, get) => ({
@@ -29,12 +31,14 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   selectedId: null,
   loading: false,
   error: null,
+  previewOverlay: { id: null, url: null },
 
   setFilters: (partial) => set((s) => ({ filters: { ...s.filters, ...partial } })),
   setBBox: (bbox) => set((s) => ({ filters: { ...s.filters, bbox } })),
   select: (id) => set(() => ({ selectedId: id })),
   setMapBBoxGetter: (fn) => set(() => ({ getMapBBox: fn })),
   setFitResults: (fn) => set(() => ({ fitResults: fn })),
+  setPreviewOverlay: (id, url) => set(() => ({ previewOverlay: { id, url } })),
 
   search: async () => {
     const { filters } = get();

@@ -7,12 +7,13 @@ export default function Map() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
 
-  const { items, selectedId, filters, setMapBBoxGetter, setFitResults } = useSearchStore((s) => ({
+  const { items, selectedId, filters, setMapBBoxGetter, setFitResults, previewOverlay } = useSearchStore((s) => ({
     items: s.items,
     selectedId: s.selectedId,
     filters: s.filters,
     setMapBBoxGetter: s.setMapBBoxGetter,
     setFitResults: s.setFitResults,
+    previewOverlay: s.previewOverlay,
   }));
 
   const featureCollection = useMemo(() => {
@@ -150,6 +151,37 @@ export default function Map() {
       if (b) map.fitBounds(b, { padding: 32, animate: true });
     }
   }, [selectedId]);
+
+  // Update preview overlay (image source) based on selected item bounds
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const overlay = previewOverlay;
+    const layerId = 'preview-layer';
+    const sourceId = 'preview-image';
+    if (!overlay?.url || !overlay?.id) {
+      if (map.getLayer(layerId)) map.removeLayer(layerId);
+      if (map.getSource(sourceId)) map.removeSource(sourceId);
+      return;
+    }
+    const feat = featureCollection.features.find((f: any) => f.id === overlay.id) as any;
+    const b = feat ? geometryBounds(feat.geometry) : (filters.bbox ? [[filters.bbox[0], filters.bbox[1]],[filters.bbox[2], filters.bbox[3]]] : null);
+    if (!b) return;
+    const [[w, s], [e, n]] = b as any;
+    const coords = [
+      [w, n], // top-left
+      [e, n], // top-right
+      [e, s], // bottom-right
+      [w, s], // bottom-left
+    ] as any;
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, { type: 'image', url: overlay.url, coordinates: coords } as any);
+      map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.9 } });
+    } else {
+      const src = map.getSource(sourceId) as any;
+      if (src && 'updateImage' in src) src.updateImage({ url: overlay.url, coordinates: coords });
+    }
+  }, [previewOverlay, featureCollection, filters.bbox]);
 
   return <div ref={containerRef} style={{ height: '100%', width: '100%' }} />;
 }

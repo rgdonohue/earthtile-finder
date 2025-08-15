@@ -55,7 +55,20 @@ export default function ResultsGrid() {
           }}
         >
           {it.thumbnail ? (
-            <img src={it.thumbnail} alt="thumbnail" style={{ width: '100%', height: 120, objectFit: 'cover' }} />
+            <img
+              src={it.thumbnail}
+              alt="thumbnail"
+              style={{ width: '100%', height: 120, objectFit: 'cover', cursor: 'pointer' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (it.visualHref) {
+                  window.open(it.visualHref, '_blank', 'noopener');
+                } else {
+                  const ev = new CustomEvent('open-item-details', { detail: { id: it.id } });
+                  window.dispatchEvent(ev);
+                }
+              }}
+            />
           ) : (
             <div style={{ width: '100%', height: 120, background: '#eee' }} />
           )}
@@ -68,6 +81,28 @@ export default function ResultsGrid() {
               {it.datetime ? fmt.format(new Date(it.datetime)) : '—'}
             </div>
             <div style={{ fontSize: 11, color: '#999', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.id}</div>
+            <div style={{ marginTop: 6 }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const ev = new CustomEvent('open-item-details', { detail: { id: it.id } });
+                  window.dispatchEvent(ev);
+                }}
+              >
+                Details
+              </button>
+              {it.visualHref ? (
+                <button
+                  style={{ marginLeft: 8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(it.visualHref!, '_blank', 'noopener');
+                  }}
+                >
+                  Open visual
+                </button>
+              ) : null}
+            </div>
           </div>
         </button>
       ))}

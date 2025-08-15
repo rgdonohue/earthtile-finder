@@ -1,4 +1,4 @@
-import { Filters, NormalizedItem, StoreError } from '@/types';
+import { Filters, NormalizedItem, StoreError, AssetLink } from '@/types';
 
 export function buildSearchBody(f: Filters) {
   if (!f.bbox) throw new Error('bbox required');
@@ -37,7 +37,16 @@ export function normalizeFeatures(json: any): NormalizedItem[] {
       const props = f.properties || {};
       const datetime = props.datetime || props.start_datetime || props.end_datetime || null;
       const assets = f.assets || props.assets || {};
-      const thumb = assets?.thumbnail?.href || pickFirstImageAssetHref(assets) || null;
+      const thumb = pickHttpsHref(assets?.thumbnail) || pickFirstImageAssetHref(assets) || null;
+      const visualHref = pickHttpsHref(assets?.visual) || pickHttpsHref(assets?.rendered_preview) || null;
+      const links: AssetLink[] = Object.keys(assets || {})
+        .map((k) => {
+          const a = assets[k];
+          const href = pickHttpsHref(a);
+          if (!href) return null;
+          return { key: k, href, type: a?.type, title: a?.title } as AssetLink;
+        })
+        .filter(Boolean) as AssetLink[];
       const collection = f.collection || props.collection || undefined;
       const cloud =
         typeof props['eo:cloud_cover'] === 'number'
@@ -53,6 +62,8 @@ export function normalizeFeatures(json: any): NormalizedItem[] {
         thumbnail: thumb,
         collection,
         cloudCover: cloud,
+        visualHref,
+        assets: links,
         raw: f,
       } as NormalizedItem;
     });
@@ -69,7 +80,19 @@ function pickFirstImageAssetHref(assets: any): string | null {
   for (const k of Object.keys(assets || {})) {
     const a = assets[k];
     const type = a?.type || a?.['content-type'] || '';
-    if (typeof type === 'string' && /image\/(png|jpeg)/.test(type)) return a.href || null;
+    if (typeof type === 'string' && /image\/(png|jpeg)/.test(type)) return pickHttpsHref(a);
+  }
+  return null;
+}
+
+function pickHttpsHref(asset: any): string | null {
+  if (!asset) return null;
+  const href: string | undefined = asset.href;
+  if (href && /^https?:\/\//.test(href)) return href;
+  const alts = asset.alternate || asset.alternates || {};
+  for (const key of Object.keys(alts)) {
+    const h = alts[key]?.href;
+    if (typeof h === 'string' && /^https?:\/\//.test(h)) return h;
   }
   return null;
 }

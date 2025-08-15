@@ -3,6 +3,7 @@ import Controls from '@/components/Controls';
 import ResultsGrid from '@/components/ResultsGrid';
 import Map from '@/components/Map';
 import { useSearchStore } from '@/store/useSearchStore';
+import ItemDetails from '@/components/ItemDetails';
 
 export default function App() {
   const init = useSearchStore((s) => s.initDefaultsAndSearch);
@@ -18,6 +19,7 @@ export default function App() {
         <Controls />
         <div style={{ marginTop: 16 }}>
           <ResultsGrid />
+          <ItemDetails />
         </div>
       </aside>
       <main>

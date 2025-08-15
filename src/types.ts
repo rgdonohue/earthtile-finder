@@ -16,8 +16,18 @@ export type NormalizedItem = {
   thumbnail?: string | null;
   collection?: string;
   cloudCover?: number | null;
+  visualHref?: string | null;
+  assets?: AssetLink[];
   raw: any;
 };
+
+export type AssetLink = {
+  key: string;
+  href: string;
+  type?: string;
+  title?: string;
+};
+
 
 export type StoreError = {
   code: 'E01_NETWORK' | 'E02_EMPTY' | 'E03_PARSE';
