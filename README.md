@@ -1,5 +1,7 @@
 # EarthTile Finder
 
+Live site: https://rgdonohue.github.io/earthtile-finder/
+
 A lightweight React + MapLibre app to search and preview satellite scenes from a public **STAC API** (Earth Search). It showcases performant geospatial UI, clean API integration, reproducible search state, and optional on‑map imagery preview.
 
 ![screenshot-placeholder](public/screenshot.png)
