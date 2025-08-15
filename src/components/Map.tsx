@@ -27,9 +27,21 @@ export default function Map() {
 
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
+    const baseStyle: any = {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors',
+        },
+      },
+      layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+    };
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: 'https://demotiles.maplibre.org/style.json',
+      style: baseStyle,
       center: [-107.88, 37.28],
       zoom: 8,
     });
@@ -152,34 +164,68 @@ export default function Map() {
     }
   }, [selectedId]);
 
-  // Update preview overlay (image source) based on selected item bounds
+  // Update preview overlay using TiTiler tiles when available, else image overlay
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     const overlay = previewOverlay;
-    const layerId = 'preview-layer';
-    const sourceId = 'preview-image';
+    const imageLayerId = 'preview-image-layer';
+    const imageSourceId = 'preview-image';
+    const tileLayerId = 'preview-tiles-layer';
+    const tileSourceId = 'preview-tiles';
     if (!overlay?.url || !overlay?.id) {
-      if (map.getLayer(layerId)) map.removeLayer(layerId);
-      if (map.getSource(sourceId)) map.removeSource(sourceId);
+      if (map.getLayer(imageLayerId)) map.removeLayer(imageLayerId);
+      if (map.getSource(imageSourceId)) map.removeSource(imageSourceId);
+      if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
+      if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
       return;
     }
     const feat = featureCollection.features.find((f: any) => f.id === overlay.id) as any;
-    const b = feat ? geometryBounds(feat.geometry) : (filters.bbox ? [[filters.bbox[0], filters.bbox[1]],[filters.bbox[2], filters.bbox[3]]] : null);
+    const b = feat
+      ? geometryBounds(feat.geometry)
+      : filters.bbox
+      ? ([
+          [filters.bbox[0], filters.bbox[1]],
+          [filters.bbox[2], filters.bbox[3]],
+        ] as any)
+      : null;
     if (!b) return;
-    const [[w, s], [e, n]] = b as any;
-    const coords = [
-      [w, n], // top-left
-      [e, n], // top-right
-      [e, s], // bottom-right
-      [w, s], // bottom-left
-    ] as any;
-    if (!map.getSource(sourceId)) {
-      map.addSource(sourceId, { type: 'image', url: overlay.url, coordinates: coords } as any);
-      map.addLayer({ id: layerId, type: 'raster', source: sourceId, paint: { 'raster-opacity': 0.9 } });
+
+    if (overlay.url.includes('{z}') && overlay.url.includes('{x}') && overlay.url.includes('{y}')) {
+      // TiTiler raster tiles
+      if (map.getLayer(imageLayerId)) map.removeLayer(imageLayerId);
+      if (map.getSource(imageSourceId)) map.removeSource(imageSourceId);
+      if (!map.getSource(tileSourceId)) {
+        map.addSource(tileSourceId, {
+          type: 'raster',
+          tiles: [overlay.url],
+          tileSize: 256,
+        } as any);
+        map.addLayer({ id: tileLayerId, type: 'raster', source: tileSourceId, paint: { 'raster-opacity': 0.9 } });
+      } else {
+        if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
+        if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
+        map.addSource(tileSourceId, { type: 'raster', tiles: [overlay.url], tileSize: 256 } as any);
+        map.addLayer({ id: tileLayerId, type: 'raster', source: tileSourceId, paint: { 'raster-opacity': 0.9 } });
+      }
     } else {
-      const src = map.getSource(sourceId) as any;
-      if (src && 'updateImage' in src) src.updateImage({ url: overlay.url, coordinates: coords });
+      // Image overlay using bounds
+      const [[w, s], [e, n]] = b as any;
+      const coords = [
+        [w, n],
+        [e, n],
+        [e, s],
+        [w, s],
+      ] as any;
+      if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
+      if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
+      if (!map.getSource(imageSourceId)) {
+        map.addSource(imageSourceId, { type: 'image', url: overlay.url, coordinates: coords } as any);
+        map.addLayer({ id: imageLayerId, type: 'raster', source: imageSourceId, paint: { 'raster-opacity': 0.9 } });
+      } else {
+        const src = map.getSource(imageSourceId) as any;
+        if (src && 'updateImage' in src) src.updateImage({ url: overlay.url, coordinates: coords });
+      }
     }
   }, [previewOverlay, featureCollection, filters.bbox]);
 

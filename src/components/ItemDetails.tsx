@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchStore } from '@/store/useSearchStore';
 
 export default function ItemDetails() {
@@ -20,6 +20,27 @@ export default function ItemDetails() {
   }, []);
 
   const item = items.find((i) => i.id === (itemId || selectedId));
+  const titiler = (import.meta as any).env?.VITE_TITILER_BASE as string | undefined;
+  const tileUrl = useMemo(() => {
+    if (!titiler || !item) return null;
+    const base = String(titiler).replace(/\/$/, '');
+    const coll = item.collection;
+    if (!coll) return null;
+    // Prefer visual asset; else try RGB bands
+    const keys = new Set((item.assets || []).map((a) => a.key));
+    let assets = '';
+    if (keys.has('visual') || keys.has('rendered_preview')) {
+      assets = keys.has('visual') ? 'visual' : 'rendered_preview';
+    } else if (keys.has('B04') && keys.has('B03') && keys.has('B02')) {
+      assets = 'B04,B03,B02';
+    } else {
+      return null;
+    }
+    const u = `${base}/stac/tiles/{z}/{x}/{y}?collection=${encodeURIComponent(
+      coll
+    )}&item=${encodeURIComponent(item.id)}&assets=${encodeURIComponent(assets)}`;
+    return u;
+  }, [titiler, item]);
   if (!open || !item) return null;
 
   return (
@@ -30,12 +51,7 @@ export default function ItemDetails() {
       </div>
       <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{item.id}</div>
       <div style={{ marginTop: 8 }}>
-        <button
-          onClick={() =>
-            setPreviewOverlay(item.id, item.visualHref || pickFirstImageAsset(item.assets))
-          }
-          disabled={!item.visualHref && !pickFirstImageAsset(item.assets)}
-        >
+        <button onClick={() => setPreviewOverlay(item.id, tileUrl || item.visualHref || pickFirstImageAsset(item.assets))} disabled={!tileUrl && !item.visualHref && !pickFirstImageAsset(item.assets)}>
           Preview on map
         </button>
         {item.visualHref ? (
@@ -81,4 +97,3 @@ function pickFirstImageAsset(assets?: { key: string; href: string; type?: string
   const img = assets.find((a) => (a.type || '').startsWith('image/'));
   return img?.href;
 }
-
