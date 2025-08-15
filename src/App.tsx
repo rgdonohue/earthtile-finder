@@ -14,7 +14,7 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen grid grid-cols-1 md:grid-cols-[440px_1fr] bg-slate-900 text-gray-300">
-      <aside className="relative overflow-y-auto border-r border-slate-800/60 p-4 md:p-6">
+      <aside className="relative border-r border-slate-800/60 p-4 md:p-6 flex flex-col overflow-hidden">
         <div className="flex items-center gap-3 mb-2">
           <img src="/logo.svg" alt="EarthTile logo" className="w-8 h-8 select-none" />
           <h1 className="mt-0 text-xl font-semibold tracking-wide text-white">EarthTile Finder</h1>
@@ -25,7 +25,7 @@ export default function App() {
           map, and download assets like Sentinel‑2 visual and band COGs directly (click Details below).
         </p>
         <Controls />
-        <div className="mt-4 space-y-4">
+        <div className="mt-4 space-y-4 flex-1 overflow-y-auto">
           <ResultsGrid />
           <ItemDetails />
         </div>

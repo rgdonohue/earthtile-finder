@@ -64,11 +64,11 @@ export default function Map() {
 
     map.on('load', () => {
       map.addSource('items', { type: 'geojson', data: featureCollection });
-      map.addLayer({ id: 'footprints-line', type: 'line', source: 'items', paint: { 'line-color': '#00f0ff', 'line-width': 1.2 } });
+      map.addLayer({ id: 'footprints-line', type: 'line', source: 'items', paint: { 'line-color': '#64748b', 'line-width': 1.2 } });
       // Hover layer (cyan) sits above base lines but below selected highlight
-      map.addLayer({ id: 'footprints-hover', type: 'line', source: 'items', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#00f0ff', 'line-width': 2.4 } });
+      map.addLayer({ id: 'footprints-hover', type: 'line', source: 'items', filter: ['==', ['id'], ''], paint: { 'line-color': '#00f0ff', 'line-width': 2.4 } });
       // Selected highlight (magenta) on top
-      map.addLayer({ id: 'footprints-highlight', type: 'line', source: 'items', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#ff2e92', 'line-width': 3 } });
+      map.addLayer({ id: 'footprints-highlight', type: 'line', source: 'items', filter: ['==', ['id'], ''], paint: { 'line-color': '#ff2e92', 'line-width': 3 } });
     });
 
     setMapBBoxGetter(() => {
@@ -141,7 +141,7 @@ export default function Map() {
     const map = mapRef.current;
     if (!map) return;
     const layerId = 'footprints-highlight';
-    if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get', 'id'], selectedId ?? '']);
+    if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['id'], selectedId ?? '']);
     if (selectedId && !suppressNextFit) {
       const feat = featureCollection.features.find((f: any) => f.id === selectedId) as any;
       const b = feat ? geometryBounds(feat.geometry) : null;
@@ -155,7 +155,7 @@ export default function Map() {
     const map = mapRef.current;
     if (!map) return;
     const layerId = 'footprints-hover';
-    if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get', 'id'], hoverId ?? '']);
+    if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['id'], hoverId ?? '']);
   }, [hoverId]);
 
   // Overlay effect
