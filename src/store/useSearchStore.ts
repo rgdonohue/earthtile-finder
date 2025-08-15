@@ -11,10 +11,8 @@ type State = {
   loading: boolean;
   error: StoreError | null;
   getMapBBox?: () => BBox | null;
-  previewOverlay?: { id: string | null; url: string | null };
   suppressNextFit: boolean;
-  overlayVisible: boolean;
-  overlayOpacity: number; // 0..1
+  // overlay removed
 };
 
 type Actions = {
@@ -25,10 +23,7 @@ type Actions = {
   search: () => Promise<void>;
   initDefaultsAndSearch: () => Promise<void>;
   setMapBBoxGetter: (fn: (() => BBox | null) | undefined) => void;
-  setPreviewOverlay: (id: string | null, url: string | null) => void;
   setSuppressNextFit: (v: boolean) => void;
-  setOverlayVisible: (v: boolean) => void;
-  setOverlayOpacity: (v: number) => void;
 };
 
 export const useSearchStore = create<State & Actions>((set, get) => ({
@@ -38,20 +33,16 @@ export const useSearchStore = create<State & Actions>((set, get) => ({
   hoverId: null,
   loading: false,
   error: null,
-  previewOverlay: { id: null, url: null },
   suppressNextFit: false,
-  overlayVisible: false,
-  overlayOpacity: 0.9,
+  
 
   setFilters: (partial) => set((s) => ({ filters: { ...s.filters, ...partial } })),
   setBBox: (bbox) => set((s) => ({ filters: { ...s.filters, bbox } })),
   select: (id) => set(() => ({ selectedId: id, suppressNextFit: false })),
   setHover: (id) => set(() => ({ hoverId: id })),
   setMapBBoxGetter: (fn) => set(() => ({ getMapBBox: fn })),
-  setPreviewOverlay: (id, url) => set(() => ({ previewOverlay: { id, url }, overlayVisible: true })),
   setSuppressNextFit: (v) => set(() => ({ suppressNextFit: v })),
-  setOverlayVisible: (v) => set(() => ({ overlayVisible: v })),
-  setOverlayOpacity: (v) => set(() => ({ overlayOpacity: Math.max(0, Math.min(1, v)) })),
+  
 
   search: async () => {
     const { filters } = get();

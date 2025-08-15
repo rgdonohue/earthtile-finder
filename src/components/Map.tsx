@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import maplibregl, { Map as MLMap, LngLatBoundsLike } from 'maplibre-gl';
+import maplibregl, { Map as MLMap } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useSearchStore } from '@/store/useSearchStore';
 
@@ -7,28 +7,12 @@ export default function Map() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
 
-  const {
-    items,
-    selectedId,
-    filters,
-    setMapBBoxGetter,
-    previewOverlay,
-    suppressNextFit,
-    overlayVisible,
-    overlayOpacity,
-    setOverlayVisible,
-    setOverlayOpacity,
-  } = useSearchStore((s) => ({
+  const { items, selectedId, filters, setMapBBoxGetter, suppressNextFit } = useSearchStore((s) => ({
     items: s.items,
     selectedId: s.selectedId,
     filters: s.filters,
     setMapBBoxGetter: s.setMapBBoxGetter,
-    previewOverlay: s.previewOverlay,
     suppressNextFit: s.suppressNextFit,
-    overlayVisible: s.overlayVisible,
-    overlayOpacity: s.overlayOpacity,
-    setOverlayVisible: s.setOverlayVisible,
-    setOverlayOpacity: s.setOverlayOpacity,
   }));
 
   const featureCollection = useMemo(() => {
@@ -73,7 +57,7 @@ export default function Map() {
 
     setMapBBoxGetter(() => {
       const b = map.getBounds();
-      return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] as any;
+      return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] as [number, number, number, number];
     });
 
     return () => {
@@ -171,73 +155,12 @@ export default function Map() {
     if (map.getLayer(layerId)) map.setFilter(layerId, ['==', ['get','id'], hoverId ?? '']);
   }, [hoverId]);
 
-  // Overlay effect
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const imageLayerId = 'preview-image-layer';
-    const imageSourceId = 'preview-image';
-    const tileLayerId = 'preview-tiles-layer';
-    const tileSourceId = 'preview-tiles';
-
-    if (!overlayVisible || !previewOverlay?.url || !previewOverlay?.id) {
-      if (map.getLayer(imageLayerId)) map.removeLayer(imageLayerId);
-      if (map.getSource(imageSourceId)) map.removeSource(imageSourceId);
-      if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
-      if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
-      return;
-    }
-
-    const feat = featureCollection.features.find((f: any) => f.id === previewOverlay.id) as any;
-    const b = feat ? geometryBounds(feat.geometry) : (filters.bbox ? [[filters.bbox[0], filters.bbox[1]], [filters.bbox[2], filters.bbox[3]]] : null);
-    if (!b) return;
-
-    const url = previewOverlay.url;
-    if (url.includes('{z}') && url.includes('{x}') && url.includes('{y}')) {
-      if (map.getLayer(imageLayerId)) map.removeLayer(imageLayerId);
-      if (map.getSource(imageSourceId)) map.removeSource(imageSourceId);
-      if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
-      if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
-      map.addSource(tileSourceId, { type: 'raster', tiles: [url], tileSize: 256 } as any);
-      map.addLayer({ id: tileLayerId, type: 'raster', source: tileSourceId, paint: { 'raster-opacity': overlayOpacity } });
-    } else {
-      const [[w, s], [e, n]] = b as any;
-      const coords = [[w, n], [e, n], [e, s], [w, s]] as any;
-      if (map.getLayer(tileLayerId)) map.removeLayer(tileLayerId);
-      if (map.getSource(tileSourceId)) map.removeSource(tileSourceId);
-      if (!map.getSource(imageSourceId)) {
-        map.addSource(imageSourceId, { type: 'image', url, coordinates: coords } as any);
-        map.addLayer({ id: imageLayerId, type: 'raster', source: imageSourceId, paint: { 'raster-opacity': overlayOpacity } });
-      } else {
-        const src = map.getSource(imageSourceId) as any;
-        if (src && 'updateImage' in src) src.updateImage({ url, coordinates: coords });
-      }
-    }
-  }, [previewOverlay, overlayVisible, overlayOpacity, featureCollection, filters.bbox]);
-
-  // Update opacity dynamically
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    if (map.getLayer('preview-tiles-layer')) map.setPaintProperty('preview-tiles-layer', 'raster-opacity', overlayOpacity);
-    if (map.getLayer('preview-image-layer')) map.setPaintProperty('preview-image-layer', 'raster-opacity', overlayOpacity);
-  }, [overlayOpacity]);
+  // Removed preview overlay feature for now
 
   return (
     <div className="absolute inset-0">
       <div ref={containerRef} className="absolute inset-0" />
-      {previewOverlay?.url ? (
-        <div className="absolute top-2 left-2 z-10 rounded-xl border border-slate-700/50 bg-slate-800/70 backdrop-blur-sm p-2 text-xs text-gray-200 flex items-center gap-2">
-          <label className="inline-flex items-center gap-1">
-            <input type="checkbox" className="accent-cyan-400" checked={overlayVisible} onChange={(e) => setOverlayVisible(e.target.checked)} />
-            Overlay
-          </label>
-          <div className="flex items-center gap-1">
-            <span className="text-gray-400">Opacity</span>
-            <input type="range" min={0} max={100} value={Math.round(overlayOpacity * 100)} onChange={(e) => setOverlayOpacity(Number(e.target.value) / 100)} className="accent-cyan-400" />
-          </div>
-        </div>
-      ) : null}
+      {/* Overlay UI removed */}
     </div>
   );
 }

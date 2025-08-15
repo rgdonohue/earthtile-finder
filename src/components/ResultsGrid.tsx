@@ -16,6 +16,9 @@ export default function ResultsGrid() {
     setHover: s.setHover,
   }));
 
+  // Keep selected card visible on change
+  useScrollSelectedIntoView(selectedId);
+
   if (!items.length) return <div>No items</div>;
 
   return (

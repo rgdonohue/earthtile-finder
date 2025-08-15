@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchStore } from '@/store/useSearchStore';
 
 export default function ItemDetails() {
-  const { selectedId, items, setPreviewOverlay, select } = useSearchStore((s) => ({
+  const { selectedId, items } = useSearchStore((s) => ({
     selectedId: s.selectedId,
     items: s.items,
-    setPreviewOverlay: s.setPreviewOverlay,
-    select: s.select,
   }));
   const [open, setOpen] = useState(false);
   const [itemId, setItemId] = useState<string | null>(null);
@@ -21,27 +19,6 @@ export default function ItemDetails() {
   }, []);
 
   const item = items.find((i) => i.id === (itemId || selectedId));
-  const titiler = (import.meta as any).env?.VITE_TITILER_BASE as string | undefined;
-  const tileUrl = useMemo(() => {
-    if (!titiler || !item) return null;
-    const base = String(titiler).replace(/\/$/, '');
-    const coll = item.collection;
-    if (!coll) return null;
-    // Prefer visual asset; else try RGB bands
-    const keys = new Set((item.assets || []).map((a) => a.key));
-    let assets = '';
-    if (keys.has('visual') || keys.has('rendered_preview')) {
-      assets = keys.has('visual') ? 'visual' : 'rendered_preview';
-    } else if (keys.has('B04') && keys.has('B03') && keys.has('B02')) {
-      assets = 'B04,B03,B02';
-    } else {
-      return null;
-    }
-    const u = `${base}/stac/tiles/{z}/{x}/{y}?collection=${encodeURIComponent(
-      coll
-    )}&item=${encodeURIComponent(item.id)}&assets=${encodeURIComponent(assets)}`;
-    return u;
-  }, [titiler, item]);
   if (!open || !item) return null;
 
   return (
@@ -59,23 +36,6 @@ export default function ItemDetails() {
         </div>
         <div className="text-xs text-gray-400 mt-1 truncate">{item.id}</div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => {
-              // Prefer tiler → visual → first image asset → thumbnail
-              const url =
-                tileUrl || item.visualHref || pickFirstImageAsset(item.assets) || item.thumbnail || null;
-              if (url) {
-                select(item.id);
-                setPreviewOverlay(item.id, url);
-              } else {
-                // eslint-disable-next-line no-console
-                console.warn('No previewable asset found for item', item.id);
-              }
-            }}
-            className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70 disabled:opacity-50"
-          >
-            Preview on map
-          </button>
           {item.visualHref ? (
             <button
               className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
@@ -121,10 +81,4 @@ export default function ItemDetails() {
       </div>
     </div>
   );
-}
-
-function pickFirstImageAsset(assets?: { key: string; href: string; type?: string }[] | undefined) {
-  if (!assets) return undefined;
-  const img = assets.find((a) => (a.type || '').startsWith('image/'));
-  return img?.href;
 }
