@@ -45,6 +45,7 @@ export default function ResultsGrid() {
           id={`card-${String(it.id)}`}
           role="listitem"
           aria-pressed={selectedId === it.id}
+          aria-selected={selectedId === it.id}
           onClick={() => select(it.id)}
           role="button"
           tabIndex={0}
@@ -61,20 +62,7 @@ export default function ResultsGrid() {
           }
         >
           {it.thumbnail ? (
-            <img
-              src={it.thumbnail}
-              alt="thumbnail"
-              className="w-full h-28 object-cover rounded-lg cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (it.visualHref) {
-                  window.open(it.visualHref, '_blank', 'noopener');
-                } else {
-                  const ev = new CustomEvent('open-item-details', { detail: { id: it.id } });
-                  window.dispatchEvent(ev);
-                }
-              }}
-            />
+            <img src={it.thumbnail} alt="thumbnail" className="w-full h-28 object-cover rounded-lg" />
           ) : (
             <div className="w-full h-28 bg-slate-700/50 rounded" />
           )}
@@ -85,7 +73,7 @@ export default function ResultsGrid() {
             </div>
             <div className="text-xs text-gray-400">{it.datetime ? fmt.format(new Date(it.datetime)) : '—'}</div>
             <div className="text-[10px] text-gray-500 truncate">{it.id}</div>
-            <div className="mt-2">
+            <div className="mt-2 flex items-center gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -102,9 +90,9 @@ export default function ResultsGrid() {
                     e.stopPropagation();
                     window.open(it.visualHref!, '_blank', 'noopener');
                   }}
-                  className="ml-2 rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-cyan-500/10 hover:shadow-lg transition-all"
+                  className="rounded-lg border border-slate-700/50 px-2 py-1 text-xs text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 transition-all"
                 >
-                  Open visual
+                  Download
                 </button>
               ) : null}
             </div>

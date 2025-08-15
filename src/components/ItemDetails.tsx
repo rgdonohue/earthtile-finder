@@ -70,7 +70,7 @@ export default function ItemDetails() {
               className="rounded-lg border border-slate-700/50 px-3 py-2 text-sm text-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/70"
               onClick={() => window.open(item.visualHref!, '_blank')}
             >
-              Open visual
+              Download
             </button>
           ) : null}
         </div>
