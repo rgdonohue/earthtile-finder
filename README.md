@@ -1,6 +1,6 @@
 # EarthTile Finder
 
-A lightweight, React + MapLibre web app to search and preview satellite scenes from a public **STAC API** (Earth Search). Built as a quick prototype to showcase performant geospatial UI, clean API integration, and reproducible search state.
+A lightweight React + MapLibre app to search and preview satellite scenes from a public **STAC API** (Earth Search). It showcases performant geospatial UI, clean API integration, reproducible search state, and optional on‑map imagery preview.
 
 ![screenshot-placeholder](public/screenshot.png)
 
@@ -20,9 +20,8 @@ A lightweight, React + MapLibre web app to search and preview satellite scenes f
 
 * [React](https://react.dev/) + [Vite](https://vitejs.dev/) + TypeScript
 * [MapLibre GL JS](https://maplibre.org/) for map rendering
-* [Zustand](https://github.com/pmndrs/zustand) for minimal state management
-* [Day.js](https://day.js.org/) for date handling
-* Tailwind CSS (optional) for quick, responsive layout
+* [Zustand](https://github.com/pmndrs/zustand) for state management
+* [Tailwind CSS](https://tailwindcss.com/) utility‑only styling
 
 ## 📦 Install & Run
 
@@ -34,32 +33,19 @@ cd earthtile-finder
 # install deps
 npm install
 
-# start dev server
+# start dev
 npm run dev
 ```
 
-## 🚀 Deploy to GitHub Pages
+## 🔧 Configuration
 
-1. In `vite.config.ts`, set:
+Create `.env.local` (optional):
 
-   ```ts
-   export default defineConfig({
-     base: '/earthtile-finder/'
-   });
-   ```
-2. Add a deploy script:
-
-   ```json
-   "scripts": {
-     "deploy": "gh-pages -d dist"
-   }
-   ```
-3. Build & publish:
-
-   ```bash
-   npm run build
-   npm run deploy
-   ```
+```
+VITE_STAC_BASE=https://earth-search.aws.element84.com/v1
+VITE_STAC_OFFLINE=false           # true = use public/sample.json
+VITE_TITILER_BASE=                # e.g., https://titiler.yourhost (optional)
+```
 
 ## 🔍 How It Works
 
@@ -73,6 +59,7 @@ npm run dev
 
    * **Footprints layer** in MapLibre.
    * **Grid of cards** with thumbnails and metadata.
+   * Optional on‑map preview overlay (TiTiler tiles or static image) for the selected item.
 4. **Click card** → highlight footprint + center map.
 5. **URL params** updated for reproducibility.
 
@@ -83,12 +70,13 @@ npm run dev
 * STAC API latency can vary — loading state shows progress.
 * Fallback `public/sample.json` used if API fails (for offline demo safety).
 
-## 💡 Next Steps
+## 🚀 Deploy (maintainers)
 
-* Add pagination and result count.
-* Support multiple collections (e.g., Landsat, MODIS).
-* Overlay preview imagery using titiler.
-* Persist search history in localStorage.
+GitHub Actions is configured to deploy to GitHub Pages on pushes to `main`.
+
+1) In repo Settings → Pages, select “GitHub Actions” as the source.
+2) Push to `main` (or trigger the workflow manually). The action builds with the correct Vite base and deploys `dist/`.
+3) First publish may take 1–2 minutes to propagate. The site is served at `https://<user>.github.io/<repo>/`.
 
 ## 🗺 Credits
 
