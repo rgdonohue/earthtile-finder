@@ -12,5 +12,5 @@ export default defineConfig({
   server: {
     port: 5173,
   },
-  // base: '/stac-scene-finder/' // set for GitHub Pages deploy
+  base: '/earthtile-finder/'
 });
